@@ -1,5 +1,6 @@
 from modules import *
 from helpers import *
+from diffae import *
 
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
@@ -20,6 +21,7 @@ from sklearn.metrics import (
 import time
 import tqdm 
 from tqdm import tqdm
+import os.path as osp
 
 
 
@@ -148,18 +150,12 @@ def train(model, optimizer, loss_fun, trainset, valset, device, n_epochs, n_samp
 
 
 
-def sample_features(model, n_features, n_samples, x_data, y_data, function_list):
+def sample_features(model, device, n_features, n_samples, x_data):
 
   mean_outputs = np.zeros((len(x_data), n_features))
   standard_variations = np.zeros((len(x_data), n_features))
 
-  #bias_mean = model.bias_mean
-  #bias_log_scale = model.lbias_sigma
-  #bias = model.bias.item()
-
-  max_fun = lambda x: np.quantile(x, q = 1)
-  min_fun = lambda x: np.quantile(x, q = 0)
-
+  x_data = x_data.numpy()
 
    # sample individual features
   for i in range(n_features):
@@ -226,6 +222,11 @@ def sample_features(model, n_features, n_samples, x_data, y_data, function_list)
 
     plt.tight_layout()
 
+    img_save_path = f'images/'
+    if not osp.exists(img_save_path): os.makedirs(img_save_path)
+
+    fig.savefig(f'{img_save_path}.png')
+
     #plt.tight_layout()
     plt.show()
 
@@ -267,7 +268,7 @@ def validate_images(model, device, mode, val_loader, loss_fun, kl_weight, batch_
             loss = log_lik_loss + scaled_kl
             val_loss.append(loss.cpu())
 
-            target_lis.append(y.detach().cpu())
+            target_lis.append(target.detach().cpu())
             pred_lis.append(torch.round(torch.sigmoid(mean_pred)).detach().cpu() if mode == "classification" else 
                             mean_pred.detach().cpu())
 
@@ -378,7 +379,7 @@ def train_images(model, optimizer, loss_fun, trainset, valset, device, n_epochs,
               print(f'Epoch nr {epoch}: mean_valid_loss = {mean_loss_val}, val_accuracy = {acc_val}, val_recall = {recall_val}, val_precision = {precision_val},  val_f1 = {f1_val}')
 
 
-            else:
+            elif mode == "regression":
 
               var_exp = var_exp_score(pred_ten, target_ten)
               mad_exp = mad_explained(pred_ten, target_ten)
@@ -561,15 +562,19 @@ def train_classifier(model, optimizer, loss_fun, trainset, valset, print_mod, de
 
 
 
-def train_bnaim(encoder, mode, n_features, hidden_units, dropout_rate, feature_dropout_rate, prior_scale, learning_rate, device, n_epochs, n_samples, n_post_samples):
-   #load encoder
-   # load data
+def train_bnaim(mode, n_features, hidden_units, dropout_rate, feature_dropout_rate, batch_size, prior_scale, learning_rate, device, n_epochs, n_samples, n_post_samples):
+   
+   pretrained_encoder = load_encoder(device=device)
+   pretrained_encoder.ema_model.eval()
+   pretrained_encoder.ema_model.to(device)
+
+   train_loader_img, val_loader_img, test_loader_img, features = load_data(batch_size=batch_size)
 
    bayes_mlp = BayesResFeature(n_input = 512) # needs to be able to adjust import at some point
    bayes_nam = BayesNAM(n_features = n_features, hidden_units = hidden_units, dropout_rate = dropout_rate, feature_dropout_rate = feature_dropout_rate,
                         prior_scale = prior_scale)
 
-   model = BayesImageNAM(pretrained_encoder = encoder, bayes_mlp = bayes_mlp, bayes_nam = bayes_nam)
+   model = BayesImageNAM(pretrained_encoder = pretrained_encoder, bayes_mlp = bayes_mlp, bayes_nam = bayes_nam)
 
    if mode == "classification":
       loss_function = F.binary_cross_entropy_with_logits
@@ -578,24 +583,86 @@ def train_bnaim(encoder, mode, n_features, hidden_units, dropout_rate, feature_d
     
    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-   model_save_name = 'one_model'
-   path = './one_checkpoint.pt'
+   model_save_name = 'model_one'
+   path = 'checkpoints'
 
    loss = train_images(model = model, optimizer = optimizer, loss_fun = loss_function, trainset = train_loader_img, valset= val_loader_img, 
                            device = device, n_epochs = n_epochs, n_samples= n_samples, kl_weight= 0.01, early_stopping = True, n_epochs_early_stopping = 50, save_path = path, print_mod = 10)
    
    torch.save(model.state_dict(), path)
 
-   sample_bnaim(model = model, n_features=n_features, n_samples = n_post_samples)
+   if mode == "classification":
+    mean_loss, acc, recall , precision, f1 = validate_images(model = model, device = device, mode = "classification", val_loader = test_loader_img, 
+                                                           loss_fun = loss_function , kl_weight = 0.1, batch_size = batch_size, n_samples = n_post_samples)
+    stats_dict = {'mean_loss': mean_loss, 'accuracy': acc, "recall": recall, "precision": precision, "f1_score": f1_score}
+   elif mode == "regression":
+    mean_loss, var_exp, mad_exp, r_score = validate_images(model = model, device = device, mode = mode, val_loader = test_loader_img, 
+                                                           loss_fun = loss_function , kl_weight = 0.1, batch_size = batch_size, n_samples = n_post_samples)
+    stats_dict = {'mean_loss': mean_loss, 'var_explained': var_exp, 'mad_explained': mad_exp, 'r_score': r_score}
+
+   means, variances = sample_bnaim(model = model, path = path, n_features=n_features, device=device, data = features, n_samples = n_post_samples) # check if test data is needed
 
 
-def sample_bnaim(model, path, n_features, n_samples = 100, DATA_FUNCTIONS = None):
+def sample_bnaim(model, path, n_features, device, data, n_samples = 100):
    
    model.load_state_dict(torch.load(path))
-   x_data_test, y_data_test = create_test_data
-   means, variances = sample_features(model = model.bayes_feat_nam, n_features = n_features, n_samples = n_samples, x_data = x_data_test, y_data=y_data_test, function_list=DATA_FUNCTIONS) # save plots in repo
+   means, variances = sample_features(model = model.bayes_feat_nam, n_features = n_features, device = device,  n_samples = n_samples, x_data = data) # save plots in repo
 
    return means, variances
+
+def load_encoder(device):
+   
+   model_resolution = 128
+   T_inv = "200"
+   T_step = 100
+
+   model_config = cxr128_autoenc() 
+
+   print(model_config.name)
+
+   diffae_weight = ""
+   diffae_latent = ""
+   cls_weight = ""
+
+   weight_dir_path = f'diffae/checkpoints/{model_config.name}'
+   if not osp.exists(weight_dir_path): os.makedirs(weight_dir_path)
+   model_weights =  '{weight_dir_path}/last.ckpt' '{model_download_path}'
+   latent_weights =  '{weight_dir_path}/latent.pkl' '{latents_download_path}'
+
+   classifer_config = cxr128_autoenc_130M()
+   weight_dir_path = f'diffae/checkpoints/{classifer_config.name}'
+   if not osp.exists(weight_dir_path): os.makedirs(weight_dir_path)
+   checkpoint = '{weight_dir_path}/last.ckpt' '{cls_download_path}'
+
+   device = device
+   conf = cxr128_autoenc()
+   # print(conf.name)
+   pretrained_encoder = LitModel(conf)
+   state = torch.load(f'diffae/checkpoints/{conf.name}/last.ckpt', map_location='cpu', weights_only=False)
+   pretrained_encoder.load_state_dict(state['state_dict'], strict=False)
+
+   return pretrained_encoder
+   
+   
+   
+def load_data(batch_size, transform=ToTensor()):
+   csv_path = "data/"
+   img_path = "data/"
+   dataset = MakeDataset(csv_file=csv_path,
+                                    root_dir=img_path, transform=transform)
+   
+   train_loader_img, val_loader_img, test_loader_img = train_test_split_features_images(images = dataset['image'],
+                                                         features = dataset['features'],
+                                                         targets = dataset['targets'],
+                                                         train_frac = 0.7,
+                                                         val_frac = 0.2,
+                                                         batch_size = batch_size)
+   
+   return train_loader_img, val_loader_img, test_loader_img, dataset['features']
+
+
+
+   
 
 
 

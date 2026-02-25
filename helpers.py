@@ -1,6 +1,9 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import torch
+import os
+from skimage import io, transform
 
 def create_synthetic_table_normal_response(function_list, noise_variance=1, n_datapoints= 10000, x_min=0, x_max=1, equally_spaced=True):
     """
@@ -150,6 +153,56 @@ class CustomDataset_img_features(torch.utils.data.Dataset):
     def set_transforms(self, transforms):
       self.transforms = transforms
 
+class ToTensor(object):
+    """Convert ndarrays in sample to Tensors."""
+
+    def __call__(self, sample):
+        image, landmarks = sample['image'], sample['landmarks']
+
+        # swap color axis because
+        # numpy image: H x W x C
+        # torch image: C x H x W
+        image = image.transpose((2, 0, 1))
+        return {'image': torch.from_numpy(image),
+                'landmarks': torch.from_numpy(landmarks)}
+
+class MakeDataset(torch.utils.data.Dataset):
+
+    def __init__(self, csv_file, root_dir, target_column, transform=None):
+        """
+        Arguments:
+            csv_file (string): Path to the csv file with annotations.
+            root_dir (string): Directory with all the images.
+            transform (callable, optional): Optional transform to be applied
+                on a sample.
+            target_column(string): csv_column containing targets
+        """
+        self.features_frame = pd.read_csv(csv_file)
+        self.root_dir = root_dir
+        self.transform = transform
+        self.targets = target_column
+    
+    def __len__(self):
+        return len(self.landmarks_frame)
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        img_name = os.path.join(self.root_dir,
+                                self.features_frame.iloc[idx, 0]) # this has to be the image name in the csv 
+        image = io.imread(img_name)
+        features = self.features_frame.iloc[idx, 1:]
+        targets = self.features_frame.iloc[idx, self.targets]
+        features = features.drop(self.targets, axis = 1)
+        features = np.array([features], dtype=float).reshape(-1, 2)
+        sample = {'image': image, 'features': features, 'targets':targets}
+
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
+
 
 
 def train_test_split_features_images(features, images, targets, train_frac, val_frac, batch_size, transforms_val_test = None, transforms_train = None):
@@ -181,6 +234,32 @@ def train_test_split_features_images(features, images, targets, train_frac, val_
     return train_loader, val_loader, test_loader
 
 
+
+def var_exp_score(predictions, targets):
+  mean_sum_of_squares = torch.mean((predictions - targets)**2)
+  variance_targets = torch.var(targets)
+  var_exp = 1- mean_sum_of_squares/variance_targets
+
+  return var_exp
+
+def coef_det(x, y):
+  sum_x = torch.sum(x)
+  sum_y = torch.sum(y)
+  n = len(x)
+
+  numerator = n * torch.sum(x * y) - sum_x*sum_x
+  denominator = (n * torch.sum(x**2) - sum_x**2)**0.5 * (n * torch.sum(y**2) - sum_y**2)**0.5
+
+  return numerator/denominator
+
+
+def mad_explained(predictions, targets):
+  mean_sum_of_ad = torch.mean(torch.abs(predictions - targets))
+  deviation_median = torch.mean(torch.abs(targets - torch.median(targets)))
+
+  mad_exp = 1 - mean_sum_of_ad/deviation_median
+
+  return mad_exp
 
 
 
