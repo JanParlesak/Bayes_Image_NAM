@@ -33,7 +33,7 @@ def average_rgb_vals_from_tensor(image_tensor):
 
 
 def average_red_value_batch(image_batch):
-    # Extract the Red channels (channel 0) for all images in the batch
+    # Extract the Red channels (channerealtive github repositry pathsl 0) for all images in the batch
     red_channels = image_batch[:, 0, :, :]
 
     # Calculate the average Red value for each image in the batch

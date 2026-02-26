@@ -2,6 +2,17 @@ import torch
 import torch.nn as nn
 from . import BayesLinear
 
+class BayesModel(nn.Module):
+   def __init__(self, conf. ConfigTrain):
+      super().__init__()
+
+      self.save_hyperparameters(conf.as_dict_jsnonable())
+
+      self.conf = conf
+
+      self.model = conf.make_model()
+   
+
 class BayesFeature(nn.Module):
   def __init__(self, hid_dim=[], dropout_rate = 0.0, prior_scale= .1, activation_function = nn.LeakyReLU()):
     super(BayesFeature, self).__init__()
