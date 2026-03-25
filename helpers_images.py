@@ -1,4 +1,3 @@
-
 import torch
 
 def average_red_value_from_tensor(image_tensor):
