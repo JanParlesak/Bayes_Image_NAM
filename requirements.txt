@@ -1,0 +1,20 @@
+torch==2.2.0+cu118 torchvision==0.17.0+cu118 torchaudio==2.2.0  pytorch-lightning==1.2.2  torchtext==0.6.0 -f https://download.pytorch.org/whl/torch_stable.html
+
+scipy==1.5.3
+numpy==1.26.4
+tqdm
+pytorch-fid==0.2.0
+pandas==2.3.3
+lpips==0.1.4
+lmdb==1.2.1
+ftfy
+regex
+dlib requests
+matplotlib
+skimage
+seaborn
+imageio
+fastprogress
+pillow
+scikit-learn
+ray 
