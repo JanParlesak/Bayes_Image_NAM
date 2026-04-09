@@ -11,7 +11,8 @@ config_bnaim_mortality = {
   "n_samples": 1,
   "name": "bnaim",
   "num_trials": 25,
-  "prior_scale": 0.1
+  "prior_scale": 0.1,
+   "target": 'last.status'
 }
 
 config_mortality_bnam = {

@@ -460,7 +460,7 @@ def train_bnaim(config):
     target = config["target"]
   
     trainset, valset, _ , features = dataloaders_img(target_column = target, train_frac = 0.7, val_frac = 0.2, batch_size = config["batch_size"],
-                                                     root_dir= root_dir=, data_dir=data_dir=)
+                                                     root_dir = root_dir, data_dir=data_dir)
 
     model = make_model(config, features.shape[-1])
 

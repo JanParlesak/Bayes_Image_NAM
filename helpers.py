@@ -11,8 +11,8 @@ import os.path as osp
 import seaborn as sns
 from modules import *
 
-from diffae_med.templates import cxr128_autoenc_130M
-from diffae_med.experiment import LitModel
+from diffae.templates import cxr128_autoenc_130M
+from diffae.experiment import LitModel
 
 goeblue = '#153268'
 midblue = '#0093c7'
