@@ -1,21 +1,14 @@
-import sys
-sys.path.append("diffae_med")
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import torch
 import os
-from skimage import io, transform
 import os.path as osp
 import seaborn as sns
 from modules import *
 
 from diffae.templates import cxr128_autoenc_130M
 from diffae.experiment import LitModel
-
-goeblue = '#153268'
-midblue = '#0093c7'
 
 
 def load_encoder(device):
