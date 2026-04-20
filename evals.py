@@ -5,6 +5,20 @@ from helpers import *
 import json
 
 
+from sklearn.metrics import (
+    precision_recall_curve,
+    auc,
+    balanced_accuracy_score,
+    roc_curve,
+    accuracy_score,
+    roc_auc_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    average_precision_score, # Import the the metrics
+)
+
+
 def get_test_predictions(best_result):
     
     mode = best_result.config["mode"]
