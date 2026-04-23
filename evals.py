@@ -94,7 +94,7 @@ def get_test_predictions(best_result):
            return var_exp, mad_exp, r_score
 
 
-def test_predictions_bnaim(config, ckpt_path, target):
+def test_predictions_bnaim(config, ckpt_path, root_dir, data_dir):
 
     mode = config["mode"]
     device = config["device"]
@@ -102,7 +102,7 @@ def test_predictions_bnaim(config, ckpt_path, target):
 
 
     _, _, test_loader, features = dataloaders_img(target_column = target, train_frac = 0.7, val_frac = 0.2, batch_size = config["batch_size"],
-                                                  root_dir = '//content/drive/MyDrive/bayesNAIM/cxr_images_ny/', data_dir = '/content/drive/MyDrive/bayesNAIM/patient_data_raw.csv')
+                                                  root_dir = root_dir, data_dir = data_dir)
 
     best_trained_model = make_model(config, features.shape[-1])
     best_trained_model.to(device)
@@ -170,7 +170,7 @@ def test_predictions_bnaim(config, ckpt_path, target):
         
 
 
-def test_predictions_bnam(config, ckpt_path):
+def test_predictions_bnam(config, ckpt_path, root_dir, data_dir):
 
     mode = config["mode"]
     device = config["device"]
@@ -178,7 +178,7 @@ def test_predictions_bnam(config, ckpt_path):
 
 
     _, _, test_loader, features = dataloaders(target_column = target, train_frac = 0.7, val_frac = 0.2, batch_size = config["batch_size"],
-                                             root_dir = '//content/drive/MyDrive/bayesNAIM/cxr_images_ny/', data_dir = '/content/drive/MyDrive/bayesNAIM/patient_data_raw.csv')
+                                             root_dir = root_dir, data_dir = data_dir)
 
     best_trained_model = make_model(config, features.shape[-1])
     best_trained_model.to(device)
@@ -244,7 +244,7 @@ def test_predictions_bnam(config, ckpt_path):
         
 
 
-def test_predictions_nam(config, ckpt_path):
+def test_predictions_nam(config, ckpt_path, root_dir, data_dir):
 
     mode = config["mode"]
     device = config["device"]
@@ -252,7 +252,7 @@ def test_predictions_nam(config, ckpt_path):
 
 
     _, _, test_loader, features = dataloaders(target_column = target, train_frac = 0.7, val_frac = 0.2, batch_size = config["batch_size"],
-                                                  root_dir = '//content/drive/MyDrive/bayesNAIM/cxr_images_ny/', data_dir = '/content/drive/MyDrive/bayesNAIM/patient_data_raw.csv')
+                                                  root_dir = root_dir, data_dir = data_dir)
 
     best_trained_model = make_model(config, features.shape[-1])
     best_trained_model.to(device)
