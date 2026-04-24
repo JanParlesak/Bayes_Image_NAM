@@ -30,13 +30,15 @@ For training we provide the diffusion autoencoder checkpoint at:
 The diffae checkpoint should be in a Bayes_Image_NAM/diffae/checkpoints/ directory and the images in the data directory.
 It should look like this:
 
+```text
 Bayes_Image_NAM/
 ├── data/
-│   ├── cxr_images_ny/
-│   └── patient_data.csv
+│ ├── cxr_images_ny/
+│ └── patient_data.csv
 └── diffae/
-    └── checkpoints/
-        └── last.ckpt
+└── checkpoints/
+└── last.ckpt
+```
 
 
 ## Demos
