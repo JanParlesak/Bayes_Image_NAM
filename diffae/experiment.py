@@ -17,12 +17,12 @@ from torch.optim.optimizer import Optimizer
 from torch.utils.data.dataset import ConcatDataset, TensorDataset
 from torchvision.utils import make_grid, save_image
 
-from config import *
-from dataset import *
-from dist_utils import *
-from lmdb_writer import *
-from metrics import *
-from renderer import *
+from diffae.config import *
+from diffae.dataset import *
+from diffae.dist_utils import *
+from diffae.lmdb_writer import *
+from diffae.metrics import *
+from diffae.renderer import *
 
 
 class LitModel(pl.LightningModule):

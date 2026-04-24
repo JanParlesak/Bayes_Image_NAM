@@ -14,12 +14,13 @@ See `requirements.txt`
 ```
 uv pip install -r requirements.txt
 ```
+We use Python 3.10. 
 
-### Checkpoints
+### Checkpoints and data
 
-We provide checkpoints at:
+We provide the checkpoints and data at:
 
-[BayesNAIM Checkpoints](https://drive.google.com/file/d/13QHJIdS5z9fCON_iA7NWhqq8Ioah4M-8/view?usp=drive_link)
+[BayesNAIM Checkpoints and Data](https://drive.google.com/file/d/13QHJIdS5z9fCON_iA7NWhqq8Ioah4M-8/view?usp=drive_link)
 
 ## Training
 

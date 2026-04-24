@@ -1,4 +1,4 @@
-from experiment import *
+from diffae.experiment import *
 
 
 def ddpm():

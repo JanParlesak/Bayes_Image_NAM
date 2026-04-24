@@ -6,15 +6,15 @@ from typing import Tuple
 
 from torch.utils.data import DataLoader
 
-from config_base import BaseConfig
-from dataset import *
-from diffusion import *
-from diffusion.base import GenerativeType, LossType, ModelMeanType, ModelVarType, get_named_beta_schedule
-from model import *
-from choices import *
+from diffae.config_base import BaseConfig
+from diffae.dataset import *
+from diffae.diffusion import *
+from diffae.diffusion.base import GenerativeType, LossType, ModelMeanType, ModelVarType, get_named_beta_schedule
+from diffae.model import *
+from diffae.choices import *
 from multiprocessing import get_context
 import os
-from dataset_util import *
+from diffae.dataset_util import *
 from torch.utils.data.distributed import DistributedSampler
 
 data_paths = {

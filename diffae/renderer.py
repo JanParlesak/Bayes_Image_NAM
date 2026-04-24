@@ -1,4 +1,4 @@
-from config import *
+from diffae.config import *
 
 from torch.cuda import amp
 
