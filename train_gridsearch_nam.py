@@ -93,6 +93,6 @@ def main(config, gpus_per_trial=1):
 
 
 
-#main(config_last_status, gpus_per_trial=1 if torch.cuda.is_available() else 0)
-#main(config_was_ventilated, gpus_per_trial=1 if torch.cuda.is_available() else 0)
+main(config_last_status, gpus_per_trial=1 if torch.cuda.is_available() else 0)
+main(config_was_ventilated, gpus_per_trial=1 if torch.cuda.is_available() else 0)
 main(config_icu, gpus_per_trial=1 if torch.cuda.is_available() else 0)

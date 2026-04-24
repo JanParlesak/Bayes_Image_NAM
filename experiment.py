@@ -16,7 +16,7 @@ def bnaim(config):
    pretrained_encoder.ema_model.eval()
    pretrained_encoder.ema_model.to(device)
 
-   train_loader_img, val_loader_img, test_loader_img, features = load_cxr_data_img(target_column = 'last.status', train_frac = 0.7, val_frac = 0.2, batch_size = config["batch_size"])
+   train_loader_img, val_loader_img, test_loader_img, features = load_cxr_data_img(target_column = config["target"], train_frac = 0.7, val_frac = 0.2, batch_size = config["batch_size"])
 
    bayes_mlp = BayesResFeature(n_input = 512, hid_dim = [500,500,500,500]) 
    bayes_nam = BayesNAM(n_features = features.shape[-1], hidden_units = [100, 100, 100], dropout_rate = config["dropout_rate"], feature_dropout_rate = config["feature_dropout_rate"],

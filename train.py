@@ -64,7 +64,7 @@ def validate_nam(model, device, mode, val_loader, loss_fun, batch_size):
 
 
         if mode == "classification":
-          pre, re, thresholds = precision_recall_curve(target_ten, norm_pred_lis) #other paper uses roc_curve here
+          pre, re, thresholds = precision_recall_curve(target_ten, norm_pred_lis) 
           auc_precision_recall = auc(re, pre)
 
           pre_2, re_2, thresholds_2 = roc_curve(target_ten, norm_pred_lis)
@@ -88,8 +88,8 @@ def validate_nam(model, device, mode, val_loader, loss_fun, batch_size):
 
 def train_nam(config):
     
-    root_dir = ''
-    data_dir = ''
+    root_dir = 'data/cxr_images_ny'
+    data_dir = 'data/patient_data.csv'
     
     device = config["device"]
     mode = config["mode"]
@@ -261,8 +261,8 @@ def validate_bnam(model, device, mode, val_loader, loss_fun, kl_weight, batch_si
 
 def train_bnam(config):
     
-    root_dir = '' 
-    data_dir = ''
+    root_dir = 'data/cxr_images_ny'
+    data_dir = 'data/patient_data.csv'
     
     device = config["device"]
     mode = config["mode"]
@@ -452,8 +452,8 @@ def validate_bnaim(model, device, mode, val_loader, loss_fun, kl_weight, batch_s
 
 def train_bnaim(config):
 
-    root_dir = '' #change this to standard data folder
-    data_dir = ''
+    root_dir = 'data/cxr_images_ny'
+    data_dir = 'data/patient_data.csv'
 
     device = config["device"]
     mode = config["mode"]

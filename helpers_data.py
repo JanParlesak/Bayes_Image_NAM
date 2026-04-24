@@ -62,15 +62,11 @@ def load_cxr_data(target_column, data_dir):
   df['8480-6_Systolic blood pressure'] = df['8480-6_Systolic blood pressure'].fillna(df['8480-6_Systolic blood pressure'].mode()[0])
   df['9279-1_Respiratory rate'] = df['9279-1_Respiratory rate'].fillna(df['9279-1_Respiratory rate'].mode()[0])
   df['59408-5_Oxygen saturation in Arterial blood by Pulse oximetry'] = df['59408-5_Oxygen saturation in Arterial blood by Pulse oximetry'].fillna(df['59408-5_Oxygen saturation in Arterial blood by Pulse oximetry'].mode()[0])
-  #df['33256-9_Leukocytes [#/volume] corrected for nucleated erythrocytes in Blood by Automated count'] = df['33256-9_Leukocytes [#/volume] corrected for nucleated erythrocytes in Blood by Automated count'].fillna(df['33256-9_Leukocytes [#/volume] corrected for nucleated erythrocytes in Blood by Automated count'].mode()[0])
   df['2823-3_Potassium [Moles/volume] in Serum or Plasma'] = df['2823-3_Potassium [Moles/volume] in Serum or Plasma'].fillna(df['2823-3_Potassium [Moles/volume] in Serum or Plasma'].mode()[0])
   df['2524-7_Lactate [Moles/volume] in Serum or Plasma'] = df['2524-7_Lactate [Moles/volume] in Serum or Plasma'].fillna(df['2524-7_Lactate [Moles/volume] in Serum or Plasma'].mode()[0])
   df['1988-5_C reactive protein [Mass/volume] in Serum or Plasma'] = df['1988-5_C reactive protein [Mass/volume] in Serum or Plasma'].fillna(df['1988-5_C reactive protein [Mass/volume] in Serum or Plasma'].mode()[0])
-  #df['2160-0_Creatinine [Mass/volume] in Serum or Plasma'] = df['2160-0_Creatinine [Mass/volume] in Serum or Plasma'].fillna(df['2160-0_Creatinine [Mass/volume] in Serum or Plasma'].mode()[0])
   df['2951-2_Sodium [Moles/volume] in Serum or Plasma'] = df['2951-2_Sodium [Moles/volume] in Serum or Plasma'].fillna(df['2951-2_Sodium [Moles/volume] in Serum or Plasma'].mode()[0])
-  #df['48058-2_Fibrin D-dimer DDU [Mass/volume] in Platelet poor plasma by Immunoassay'] = df['48058-2_Fibrin D-dimer DDU [Mass/volume] in Platelet poor plasma by Immunoassay'].fillna(df['48058-2_Fibrin D-dimer DDU [Mass/volume] in Platelet poor plasma by Immunoassay'].mode()[0])
-  #df['3094-0_Urea nitrogen [Mass/volume] in Serum or Plasma'] = df['3094-0_Urea nitrogen [Mass/volume] in Serum or Plasma'].fillna(df['3094-0_Urea nitrogen [Mass/volume] in Serum or Plasma'].mode()[0])
-  #df['1920-8_Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma'] = df['1920-8_Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma'].fillna(df['1920-8_Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma'].mode()[0])
+ 
 
 
   if target_column == "last.status":
