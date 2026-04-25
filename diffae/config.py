@@ -1,7 +1,7 @@
-from model.unet import ScaleAt
-from model.latentnet import *
-from diffusion.resample import UniformSampler
-from diffusion.diffusion import space_timesteps
+from diffae.model.unet import ScaleAt
+from diffae.model.latentnet import *
+from diffae.diffusion.resample import UniformSampler
+from diffae.diffusion.diffusion import space_timesteps
 from typing import Tuple
 
 from torch.utils.data import DataLoader
