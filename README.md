@@ -2,6 +2,10 @@
 
 This repository is the codebase for the Bayesian Neural Additive Image Model (BayesNAIM). The BayesNAIM combines tabular data with image effects, while providing uncertainty estimates. 
 
+<p align="center">
+<img src="imgs/bayesnaim.png" width="75%" alt="Original vs Generated CXR">
+</p>
+
 
 ### Datasets
 
